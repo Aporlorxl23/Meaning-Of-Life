@@ -4,7 +4,7 @@ section .text
 _IDK:
     push rbp
     mov rbp, rsp
-    mov eax, [rsp+16]
+    mov eax, [rbp+16]
     mov ecx, 3
     mul ecx
     leave
