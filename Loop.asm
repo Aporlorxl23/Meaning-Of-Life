@@ -10,15 +10,15 @@ _start:
     loop:
         cmp r12, 0
         je exit
-        push rax
-        push rsp
-        pop r11
-        mov rax, 1
-        mov rdi, 1
-        mov rsi, r11
-        mov dl, 1
-        syscall
-        pop rax
+        push rax     ; <---|
+        push rsp     ;     |
+        pop r11      ;     |
+        mov rax, 1   ;     |
+        mov rdi, 1   ;     |
+        mov rsi, r11 ;     |
+        mov dl, 1    ;     |
+        syscall      ;     |
+        pop rax      ; <---|
         sub rax, '0'
         inc rax
         add rax, '0'
