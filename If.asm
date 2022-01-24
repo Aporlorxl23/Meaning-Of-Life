@@ -40,7 +40,7 @@ _start:
         mov rax, 1
         mov rdi, 1
         lea rsi, [Error]
-        mov rdx, 9
+        mov rdx, 10
         syscall
         jmp exit
     exit:
@@ -48,4 +48,4 @@ _start:
         xor edi, edi
         syscall
 section .data
-Error: db "Undifened"
+Error: db "Undifened", 0xA
