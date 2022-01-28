@@ -19,5 +19,7 @@ function shellcode() {
     objcopy --dump-section .text=$name-raw $name
  }
 ```
+
 asm64 Hello_World.asm; ./Hello_World
+
 shellcode Binsh.S; ./Binsh
