@@ -14,11 +14,13 @@ _start:
         je exit
 
         mov r11b, byte [msg+r9]
+        cmp r11b, 0xA
+        je new
         add r11b, 0x20
+        new:
         mov rax, 1
         mov rdi, 1
         mov rdx, msgl
-        dec rdx
         push r11
         push rsp
         pop rsi
@@ -27,13 +29,6 @@ _start:
         jmp stack
 
     exit:
-        mov rax, 1
-        mov rdi, 1
-        mov rdx,1
-        push 0xA
-        push rsp
-        pop rsi
-        syscall
         mov rax, 0x3c
         xor edi, edi
         leave
@@ -42,4 +37,3 @@ _start:
 section .data
     msg: db "APORLOX",0xA
     msgl: equ $-msg
-; aporlox
