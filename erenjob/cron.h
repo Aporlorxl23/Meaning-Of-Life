@@ -35,12 +35,13 @@ void get_time(void){
 
 
 void runner(struct timer_options *timer){
+    sleep(1);
     printf("[*] Waiting %d:%d:%d, Command: %s\n", timer->hour, timer->minute, timer->second, timer->command);
     while(1) {
         get_time();
         if (timer->hour == timeinfo->tm_hour && timer->minute == timeinfo->tm_min && timer->second == timeinfo->tm_sec){
             system(timer->command);
-            printf("Command: %s complated!\n", timer->command);
+            printf("Command: %s completed!\n", timer->command);
             break;
         }
     }
