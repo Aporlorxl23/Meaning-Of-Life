@@ -1,7 +1,7 @@
-# erenejob
+# erenjob
 
 <h1 align="left">
-  <img src="erenjob.png" alt="HTTPResponder" width="700px"></a>
+  <img src="erenjob.png" alt="erenjob" width="700px"></a>
   <br>
 </h1>
 
