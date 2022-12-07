@@ -6,7 +6,7 @@
 
 void get_time(void);
 void runner(struct timer_options *timer);
-int pre_runner();
+void pre_runner(void);
 void init(void);
 
 void get_time(void){
@@ -42,11 +42,11 @@ void runner(struct timer_options *timer){
     }
 }
 
-int pre_runner() {
+void pre_runner(void) {
     FILE *fp = fopen(CONFIG_FILE,"r");
     if (fp == NULL) {
         printf("[!] %s file not found!\n", CONFIG_FILE);
-        return EXIT_FAILURE;
+        exit(EXIT_FAILURE);
     }
     int i = WORKER_MAX;
     while (fscanf(fp, "%d %d %d %[^\n]", &timer[i].hour, &timer[i].minute, &timer[i].second, timer[i].command) != EOF) {
@@ -58,7 +58,6 @@ int pre_runner() {
         pthread_join(timer[j].thread_id, NULL);
     }
     fclose(fp);
-    return 0;
 }
 
 void init(void) {
