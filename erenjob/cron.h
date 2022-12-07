@@ -2,17 +2,13 @@
 #include <unistd.h>
 #include <pthread.h>
 
-#define WORKER_MAX 5
+#include "types.h"
 
-struct timer_options {
-    pthread_t thread_id;
-    int hour;
-    int minute;
-    int second;
-    char command[1024];
-} timer[WORKER_MAX];
+void get_time(void);
+void runner(struct timer_options *timer);
+int pre_runner();
+void init(void);
 
-struct tm *timeinfo;
 void get_time(void){
     time_t my_time;
     time(&my_time);
@@ -33,24 +29,23 @@ void get_time(void){
     */
 }
 
-
 void runner(struct timer_options *timer){
     sleep(1);
-    printf("[*] Waiting %d:%d:%d, Command: %s\n", timer->hour, timer->minute, timer->second, timer->command);
+    printf("[+] Waiting %d:%d:%d, Command: \"%s\"\n", timer->hour, timer->minute, timer->second, timer->command);
     while(1) {
         get_time();
         if (timer->hour == timeinfo->tm_hour && timer->minute == timeinfo->tm_min && timer->second == timeinfo->tm_sec){
             system(timer->command);
-            printf("Command: %s completed!\n", timer->command);
+            printf("[*] Command: \"%s\" completed!\n", timer->command);
             break;
         }
     }
 }
 
-int pre_runner(void) {
-    FILE *fp = fopen("cron.config","r");
+int pre_runner() {
+    FILE *fp = fopen(CONFIG_FILE,"r");
     if (fp == NULL) {
-        printf("[*] 'cron.config' file not found!");
+        printf("[!] %s file not found!\n", CONFIG_FILE);
         return EXIT_FAILURE;
     }
     int i = WORKER_MAX;
@@ -62,8 +57,8 @@ int pre_runner(void) {
     for (int j = WORKER_MAX; j >= i; j--) {
         pthread_join(timer[j].thread_id, NULL);
     }
-    printf("[+] All threads completed!\n"); 
     fclose(fp);
+    return 0;
 }
 
 void init(void) {
