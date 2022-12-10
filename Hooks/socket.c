@@ -1,5 +1,5 @@
 /*
-gcc hook.c -o hook.so -fPIC -shared -D_GNU_SOURCE
+gcc socket.c -o socket.so -fPIC -shared -D_GNU_SOURCE
 */
 #include <stdio.h>
 #include <unistd.h>
@@ -30,7 +30,6 @@ ssize_t send(int sockfd, const void *buf, size_t len, int flags) {
     printf("[*] Sockfd: %d & Buf: %p & Len: %lu & Flags: %d\n", sockfd, &buf, len, flags);
     return new_send(sockfd, &buf, len, flags);
 }
-
 
 int getaddrinfo(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res) {
     int (*new_getaddrinfo)(const char *node, const char *service, const struct addrinfo *hints, struct addrinfo **res);
