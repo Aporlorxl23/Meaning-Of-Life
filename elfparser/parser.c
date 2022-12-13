@@ -25,7 +25,6 @@ void set_structure();
 void print_all();
 void initialize();
 
-
 void prepare_dicts() {
     machine_dict = dictAlloc();
     abi = dictAlloc();
@@ -56,8 +55,7 @@ void destroy_dicts() {
 void read_elf_header(){
     for(int idx = 0; idx < 0x40; ++idx) {
         fread((buffer+idx) ,1, 1, fp);
-    }
-    fclose(fp);
+    } fclose(fp);
 }
 
 void print_magic(){
@@ -71,6 +69,7 @@ void check_valid_elf_file() {
     for (int jdx = 1; jdx < 4; ++jdx) {
         elf_header.elf[jdx-1] = (char)buffer[jdx];
     }
+
     if(strcmp("ELF", elf_header.elf)) {
         fprintf(stderr, "This is not valid ELF file!\n");
         exit(EXIT_FAILURE);
@@ -104,15 +103,16 @@ void initialize(char *fname) {
         fprintf(stderr, "File not found!\n");
         exit(EXIT_FAILURE);
     }
+
     fseek(fp, 0, SEEK_END);
     filelen = ftell(fp);
     rewind(fp);
+
     buffer = (int *)malloc((filelen+1)*sizeof(int)); 
     memset(buffer, '\0', filelen);
 }
 
 int main(int argc, char **argv) { 
-
     initialize(argv[1]);
     prepare_dicts();
     read_elf_header();
