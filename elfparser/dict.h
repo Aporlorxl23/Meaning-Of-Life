@@ -1,13 +1,16 @@
 // https://gist.github.com/kylef/86784/fe97567ec9baf5c0dce3c7fcbec948e21dfcce09
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 typedef struct dict_t_struct {
     int key;
     void *value;
     struct dict_t_struct *next;
 } dict_t;
+
+dict_t **dictAlloc(void);
+void dictDealloc(dict_t **dict);
+void *getItem(dict_t *dict, int key);
+void dict_delItem(dict_t **dict, int key);
+void addItem(dict_t **dict, int key, void *value);
 
 dict_t **dictAlloc(void) {
     return malloc(sizeof(dict_t));
