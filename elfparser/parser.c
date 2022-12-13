@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "dict.c"
+#include "dict.h"
 
 struct elf_header {
     char elf[5];
@@ -15,6 +15,16 @@ FILE *fp;
 size_t filelen;
 int *buffer;
 dict_t **machine_dict, **abi, **endianness;
+
+void prepare_dicts();
+void destroy_dicts();
+void read_elf_header();
+void print_magic();
+void check_valid_elf_file();
+void set_structure();
+void print_all();
+void initialize();
+
 
 void prepare_dicts() {
     machine_dict = dictAlloc();
