@@ -10,11 +10,15 @@
 #define ELF_HEADER_ABI 0x7
 #define ELF_HEADER_MACHINE 0x12
 
+#define ELF_PIE 0x10
+
 struct elf_header {
     char elf[5];
     short abi;
     short machine;
     short endian;
+
+    short pie;
 } elf_header;
 
 FILE *fp;
@@ -34,6 +38,7 @@ void initialize();
 void print_all2();
 void overwrite_initialize();
 void overwrite();
+void print_pie();
 
 void prepare_dicts() {
     machine_dict = dictAlloc();
@@ -95,12 +100,20 @@ void set_structure() {
     elf_header.endian = buffer[ELF_HEADER_ENDIAN];
     elf_header.abi = buffer[ELF_HEADER_ABI];
     elf_header.machine = buffer[ELF_HEADER_MACHINE];
+    elf_header.pie = buffer[ELF_PIE];
 
     //buffer[0x4] == 2 ? memcpy(elf_header.elf, "ELF64", sizeof(elf_header.elf)) : memcpy(elf_header.elf, "ELF32", sizeof(elf_header.elf));
     if (buffer[ELF_HEADER_BYTE] == 2)
         memcpy(elf_header.elf, "ELF64", sizeof(elf_header.elf));
     else
         memcpy(elf_header.elf, "ELF32", sizeof(elf_header.elf));
+}
+
+void print_pie() {
+    if (elf_header.pie == 0x3)
+        printf("  PIE:          Enabled\n");
+    else
+        printf("  PIE:          Disabled\n");
 }
 
 void print_all() {
@@ -110,6 +123,7 @@ void print_all() {
     printf("  Machine:      %s\n", (char *)getItem(*machine_dict, elf_header.machine));
     printf("  OS/ABI:       %s\n", (char *)getItem(*abi_dict, elf_header.abi));
     printf("  Endianness:   %s\n", (char *)getItem(*endianness_dict, elf_header.endian));
+    print_pie();
 }
 
 void initialize(char *fname) {
@@ -129,11 +143,13 @@ void initialize(char *fname) {
 
 void print_all2() {
     printf("New ELF Header:\n");
+    print_magic();
     printf("  Output:       %s\n", output);
     printf("  Class:        ELF%d\n", elf_arch);
     printf("  Machine:      %s\n", (char *)getItem(*machine_dict, machine));
     printf("  OS/ABI:       %s\n", (char *)getItem(*abi_dict, abi));
     printf("  Endianness:   %s\n", (char *)getItem(*endianness_dict, endianness));
+    print_pie();
 }
 
 void overwrite_initialize(char *fname) {
@@ -205,6 +221,11 @@ int main(int argc, char **argv) {
         overwrite();
         print_all2();
     }
+    /*
+    for (int ndx = 0; ndx < 0x100; ++ndx) {
+        printf("%.2x ", buffer[ndx]);
+    } putchar('\n');
+    */
     destroy_dicts();
 
     return 0;
