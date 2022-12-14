@@ -5,6 +5,11 @@
 #include "dict.h"
 #include "options.h"
 
+#define ELF_HEADER_BYTE 0x4
+#define ELF_HEADER_ENDIAN 0x5
+#define ELF_HEADER_ABI 0x7
+#define ELF_HEADER_MACHINE 0x12
+
 struct elf_header {
     char elf[5];
     short abi;
@@ -61,7 +66,7 @@ void read_elf(){
     // 0x40 to filelen for read all elf data
     for(int idx = 0; idx <= filelen; ++idx) {
         fread((buffer+idx) ,1, 1, fp);
-    } 
+    }
     if (!change_flag)
         fclose(fp);
 }
@@ -74,25 +79,25 @@ void print_magic(){
 }
 
 void check_valid_elf_file() {
-    for (int jdx = 1; jdx < 4; ++jdx) {
+    for (int jdx = 1; jdx < ELF_HEADER_BYTE; ++jdx) {
         elf_header.elf[jdx-1] = (char)buffer[jdx];
     }
 
     if(strcmp("ELF", elf_header.elf)) {
         fprintf(stderr, "This is not valid ELF file!\n");
         exit(EXIT_FAILURE);
-    } 
+    }
     if (change_flag)
-        fclose(fp);       
+        fclose(fp);
 }
 
 void set_structure() {
-    elf_header.endian = buffer[0x5];
-    elf_header.abi = buffer[0x7];
-    elf_header.machine = buffer[0x12];
-    
+    elf_header.endian = buffer[ELF_HEADER_ENDIAN];
+    elf_header.abi = buffer[ELF_HEADER_ABI];
+    elf_header.machine = buffer[ELF_HEADER_MACHINE];
+
     //buffer[0x4] == 2 ? memcpy(elf_header.elf, "ELF64", sizeof(elf_header.elf)) : memcpy(elf_header.elf, "ELF32", sizeof(elf_header.elf));
-    if (buffer[0x4] == 2)
+    if (buffer[ELF_HEADER_BYTE] == 2)
         memcpy(elf_header.elf, "ELF64", sizeof(elf_header.elf));
     else
         memcpy(elf_header.elf, "ELF32", sizeof(elf_header.elf));
@@ -118,7 +123,7 @@ void initialize(char *fname) {
     filelen = ftell(fp);
     rewind(fp);
 
-    buffer = (int *)malloc((filelen+1)*sizeof(int)); 
+    buffer = (int *)malloc((filelen+1)*sizeof(int));
     memset(buffer, '\0', filelen);
 }
 
@@ -146,21 +151,21 @@ void overwrite() {
     elf_header.abi = buffer[0x7];
     elf_header.machine = buffer[0x12];
     */
-    
+
     if (!endianness_flag)
-        endianness = buffer[0x5];
+        endianness = buffer[ELF_HEADER_ENDIAN];
     if (!abi_flag)
-        abi = buffer[0x7];
+        abi = buffer[ELF_HEADER_ABI];
     if (!machine_flag)
-        machine = buffer[0x12];
+        machine = buffer[ELF_HEADER_MACHINE];
     if (!elf_arch_flag)
-        elf_arch = buffer[0x4];
+        elf_arch = buffer[ELF_HEADER_BYTE];
 
     if (elf_arch == 64 || elf_arch == 2) {
-        buffer[0x4] = 2;
+        buffer[ELF_HEADER_BYTE] = 2;
         elf_arch = 64;
     } else if (elf_arch == 32 || elf_arch == 1) {
-        buffer[0x4] = 1;
+        buffer[ELF_HEADER_BYTE] = 1;
         elf_arch = 32;
     } else {
         fprintf(stderr, "[-] -E architecture paramter must be 32 or 64!\n");
@@ -168,15 +173,15 @@ void overwrite() {
     }
 
     if (machine) {
-        buffer[0x12] = machine;
-    } 
+        buffer[ELF_HEADER_MACHINE] = machine;
+    }
 
     if (abi) {
-        buffer[0x7] = abi;
+        buffer[ELF_HEADER_ABI] = abi;
     }
 
     if (endianness) {
-        buffer[0x5] = endianness;
+        buffer[ELF_HEADER_ENDIAN] = endianness;
     }
 
     for (int idx = 0; idx <= filelen; ++idx) {
@@ -185,8 +190,8 @@ void overwrite() {
     fclose(fp);
 }
 
-int main(int argc, char **argv) { 
-    
+int main(int argc, char **argv) {
+
     set_arguments(argc, argv);
     prepare_dicts();
     initialize(argv[optind]);
